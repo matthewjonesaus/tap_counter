@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #counter {
+            font-size: 120px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: transform 0.1s ease;
+        }
+
+        #counter.pulse {
+            transform: scale(1.1);
+        }
+
+        #instruction {
+            font-size: 24px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        #resetButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        #resetButton:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        #resetButton:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">0</div>
+    <div id="instruction">Tap anywhere to count</div>
+    <button id="resetButton">Reset</button>
+
+    <script>
+        let count = 0;
+        const counterElement = document.getElementById('counter');
+        const resetButton = document.getElementById('resetButton');
+
+        document.body.addEventListener('click', function(event) {
+            // Don't increment if clicking the reset button
+            if (event.target === resetButton) {
+                return;
+            }
+
+            count++;
+            counterElement.textContent = count;
+
+            // Add pulse animation
+            counterElement.classList.add('pulse');
+            setTimeout(() => {
+                counterElement.classList.remove('pulse');
+            }, 100);
+        });
+
+        resetButton.addEventListener('click', function() {
+            count = 0;
+            counterElement.textContent = count;
+        });
+    </script>
+</body>
+</html>
