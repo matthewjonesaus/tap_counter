@@ -18,10 +18,50 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:
+                radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(180deg,
+                    #1e3a8a 0%,
+                    #3b82f6 20%,
+                    #1e3a8a 40%,
+                    #1e1e1e 50%,
+                    #7f1d1d 60%,
+                    #dc2626 80%,
+                    #7f1d1d 100%
+                );
+            background-size: 20px 20px, 40px 40px, 100% 100%;
+            background-position: 0 0, 10px 10px, 0 0;
             color: white;
             cursor: pointer;
             user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.03) 40px,
+                    rgba(255, 255, 255, 0.03) 80px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.03) 40px,
+                    rgba(255, 255, 255, 0.03) 80px
+                );
+            pointer-events: none;
         }
 
         #counter {
@@ -29,6 +69,8 @@
             font-weight: bold;
             margin-bottom: 20px;
             transition: transform 0.1s ease;
+            position: relative;
+            z-index: 10;
         }
 
         #counter.pulse {
@@ -39,6 +81,8 @@
             font-size: 24px;
             opacity: 0.8;
             margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
         }
 
         #resetButton {
@@ -52,6 +96,8 @@
             cursor: pointer;
             transition: all 0.2s ease;
             backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
         }
 
         #resetButton:hover {
@@ -62,17 +108,114 @@
         #resetButton:active {
             transform: scale(0.95);
         }
+
+        #specialMessage, #megaMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                         0 0 40px rgba(255, 215, 0, 0.6),
+                         0 0 60px rgba(255, 215, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+            animation: none;
+            text-align: center;
+        }
+
+        #specialMessage.show, #megaMessage.show {
+            animation: moneySpinner 2s ease-out forwards;
+        }
+
+        @keyframes moneySpinner {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -150vh);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(-50%, -400%);
+            }
+            70% {
+                opacity: 1;
+                transform: translate(-50%, -400%);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -400%);
+            }
+        }
+
+        body.celebration {
+            animation: backgroundPulse 0.5s ease-in-out 3;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.3);
+            }
+        }
+
+        /* Mobile breakpoint */
+        @media (max-width: 768px) {
+            #counter {
+                font-size: 80px;
+            }
+
+            #instruction {
+                font-size: 18px;
+            }
+
+            #specialMessage, #megaMessage {
+                font-size: 32px;
+                max-width: 90%;
+            }
+
+            #specialMessage.show, #megaMessage.show {
+                animation: moneySpinnerMobile 2s ease-out forwards;
+            }
+
+            @keyframes moneySpinnerMobile {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -150vh);
+                }
+                30% {
+                    opacity: 1;
+                    transform: translate(-50%, -250%);
+                }
+                70% {
+                    opacity: 1;
+                    transform: translate(-50%, -250%);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(-50%, -250%);
+                }
+            }
+        }
     </style>
 </head>
 <body>
     <div id="counter">0</div>
     <div id="instruction">Tap anywhere to count</div>
     <button id="resetButton">Reset</button>
+    <div id="specialMessage">Money Spinner Activated!</div>
+    <div id="megaMessage">Mega Money Spinner Activated!</div>
 
     <script>
         let count = 0;
         const counterElement = document.getElementById('counter');
         const resetButton = document.getElementById('resetButton');
+        const specialMessage = document.getElementById('specialMessage');
+        const megaMessage = document.getElementById('megaMessage');
 
         document.body.addEventListener('click', function(event) {
             // Don't increment if clicking the reset button
@@ -88,7 +231,51 @@
             setTimeout(() => {
                 counterElement.classList.remove('pulse');
             }, 100);
+
+            // Special animation when reaching 10
+            if (count === 10) {
+                triggerMoneySpinner();
+            }
+
+            // Mega special animation when reaching 15
+            if (count === 15) {
+                triggerMegaMoneySpinner();
+            }
         });
+
+        function triggerMoneySpinner() {
+            // Add celebration effect to body
+            document.body.classList.add('celebration');
+
+            // Show the special message
+            specialMessage.classList.add('show');
+
+            // Remove animations after they complete
+            setTimeout(() => {
+                document.body.classList.remove('celebration');
+            }, 1500);
+
+            setTimeout(() => {
+                specialMessage.classList.remove('show');
+            }, 2000);
+        }
+
+        function triggerMegaMoneySpinner() {
+            // Add celebration effect to body
+            document.body.classList.add('celebration');
+
+            // Show the mega message
+            megaMessage.classList.add('show');
+
+            // Remove animations after they complete
+            setTimeout(() => {
+                document.body.classList.remove('celebration');
+            }, 1500);
+
+            setTimeout(() => {
+                megaMessage.classList.remove('show');
+            }, 2000);
+        }
 
         resetButton.addEventListener('click', function() {
             count = 0;
